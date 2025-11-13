@@ -3,7 +3,7 @@
 ### *Environmental Guardian for Alert, Notification, Data Logging & Flood-prevention*
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Gandalf_the_Grey.svg/640px-Gandalf_the_Grey.svg.png" width="180px">
+  <img src="" width="180px">
 </p>
 
 <p align="center">
