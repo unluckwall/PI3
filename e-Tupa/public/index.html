@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>e-TUPÃ - Monitoramento Climático Inteligente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <!-- Animate on Scroll -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+
+    <!-- Estilo -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+    <header class="topo">
+        <h1 class="titulo" data-aos="fade-down">e-TUPÃ</h1>
+        <p class="subtitulo" data-aos="fade-down" data-aos-delay="200">Sistema Inteligente de Monitoramento Climático
+        </p>
+    </header>
+
+    <main class="container mt-4">
+
+        <!-- STATUS CLIMÁTICO -->
+        <section data-aos="fade-up">
+            <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+                <h2 class="mb-0">Status Climático Atual</h2>
+                <select id="localSelect" class="form-select form-select-sm w-auto" style="min-width:160px;">
+                    <option value="Tupã">Tupã</option>
+                    <option value="Marília">Marília</option>
+                    <option value="Bauru">Bauru</option>
+                    <option value="Ourinhos">Ourinhos</option>
+                    <option value="Aracruz">Aracruz</option>
+                </select>
+                <button id="useMyLocation" class="btn btn-primary btn-sm">Usar Minha Localização</button>
+            </div>
+            <div id="status-clima" class="alert alert-info">Carregando dados...</div>
+        </section>
+
+        <!-- CARDS DE NÍVEIS -->
+        <section class="row mt-4">
+
+            <div class="col-md-3" data-aos="fade-up">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4>🌧 Chuva</h4>
+                        <p id="nivelChuva">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4>🌊 Nível da Água</h4>
+                        <p id="nivelAgua">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4>💧 Umidade</h4>
+                        <p id="nivelUmidade">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h4>🚨 Risco De Enchente</h4>
+                        <p id="riscoEnchente">--</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- WHATSAPP -->
+        <section class="whatsapp-area mt-5" data-aos="zoom-in">
+            <h3>Acompanhe as atualizações pelo WhatsApp</h3>
+
+            <input type="tel" id="telefone" class="form-control mb-2" placeholder="(11) 90000-0000">
+            <button class="btn btn-success w-100" id="btnCadastrarWhats">Quero receber alertas</button>
+
+            <small class="text-muted">Você receberá alertas automáticos sobre chuva, enchentes e riscos.</small>
+        </section>
+
+    </main>
+
+    <!-- CARROSSEL NO FOOTER -->
+    <!-- Carousel Footer -->
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div id="footerCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active text-center p-4">
+                    <h4>Equipe do Projeto</h4>
+                    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-3">
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Membro 1" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Membro 1</div>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Membro 2" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Membro 2</div>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Membro 3" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Membro 3</div>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Membro 4" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Membro 4</div>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Membro 5" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Membro 5</div>
+                        </div>
+                    </div>
+                    <p class="mt-3">Conheça os membros responsáveis pelo e‑TUPÃ.</p>
+                </div>
+                <div class="carousel-item text-center p-4">
+                    <h4>Professores Auxiliares</h4>
+                    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-3">
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Professor 1" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Professor 1</div>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://placehold.co/60x60" alt="Professor 2" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="font-size:0.9rem;">Professor 2</div>
+                        </div>
+                    </div>
+                    <p class="mt-3">Apoio fundamental na orientação técnica.</p>
+                </div>
+                <div class="carousel-item text-center p-4">
+                    <h4>GitHub do Projeto</h4>
+                    <p><a href="#" class="text-info">Clique aqui para acessar</a></p>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#footerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#footerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>AOS.init();</script>
+
+    <script src="js/clima.js"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- Script para integração com a API de clima -->
+    <script src="js/clima-api.js"></script>
+
+</body>
+
+</html>
