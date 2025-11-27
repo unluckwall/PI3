@@ -1,6 +1,6 @@
 /* Base Variables */
 :root {
-    --primary: #007bff;
+    --primary: #588ba9;
     --success: #28a745;
     --info: #17a2b8;
     --dark: #212529;
@@ -21,8 +21,6 @@ body {
     color: #fff;
     padding: 2rem 0 1rem 0;
     text-align: center;
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
 }
 
@@ -102,14 +100,11 @@ body {
 
 /* Carousel Footer */
 footer {
-    border-top-left-radius: 2rem;
-    border-top-right-radius: 2rem;
     box-shadow: 0 -2px 12px rgba(0,0,0,0.07);
     background: var(--dark);
 }
 #footerCarousel .carousel-inner {
-    border-radius: 1rem;
-    background: rgba(33,37,41,0.95);
+    background: #373c3f;
     box-shadow: 0 2px 16px rgba(0,0,0,0.09);
 }
 #footerCarousel h4 {
