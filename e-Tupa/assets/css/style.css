@@ -1,7 +1,7 @@
 /* Base Variables */
 :root {
     --primary: #588ba9;
-    --success: #28a745;
+    --success: #3390ec;
     --info: #17a2b8;
     --dark: #212529;
     --light: #f8f9fa;
@@ -62,7 +62,7 @@ body {
 }
 
 /* WhatsApp Area */
-.whatsapp-area {
+.telegram-area {
     background: linear-gradient(90deg, var(--success) 0%, var(--info) 100%);
     color: #fff;
     border-radius: 1rem;
@@ -70,30 +70,30 @@ body {
     padding: 2rem 1.5rem;
     text-align: center;
 }
-.whatsapp-area h3 {
+.telegram-area h3 {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
 }
-.whatsapp-area input {
+.telegram-area input {
     border-radius: 0.5rem;
     border: none;
     font-size: 1.1rem;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
 }
-.whatsapp-area input:focus {
+.telegram-area input:focus {
     outline: 2px solid var(--primary);
     box-shadow: 0 0 0 2px var(--info);
 }
-.whatsapp-area button {
+.telegram-area button {
     border-radius: 0.5rem;
     font-size: 1.1rem;
     font-weight: 600;
     transition: background var(--transition), box-shadow var(--transition);
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
-.whatsapp-area button:hover {
+.telegram-area button:hover {
     background: var(--primary);
     box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
@@ -141,7 +141,7 @@ footer {
     .card{
         margin-bottom: 1.5rem;
     }
-    .whatsapp-area {
+    .telegram-area {
         padding: 1.2rem 0.7rem;
     }
     footer {
