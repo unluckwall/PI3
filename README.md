@@ -30,7 +30,7 @@ O **e-TUPÃ** é um sistema IoT para **monitoramento climático urbano**, integr
 Objetivo: **Prever e alertar sobre riscos de alagamento** usando tecnologia acessível e escalável.
 
 🔗 **Acesse o site online:**  
-**https://unluckwall.github.io/PI3/e-Tupa/public/**
+**https://pi3-sigma.vercel.app**
 
 ---
 
