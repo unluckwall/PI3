@@ -52,10 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!mapa) {
             mapa = L.map('forecastMap').setView([lat, lon], 10);
 
-            L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_gray/{z}/{x}/{y}{r}.png', {
-                maxZoom: 20,
-                attribution: '&copy; Stadia Maps'
-            }).addTo(map);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "© OpenStreetMap"
+            }).addTo(mapa);
 
         } else {
             mapa.setView([lat, lon], 10);
