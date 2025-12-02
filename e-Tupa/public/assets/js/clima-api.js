@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // 🌍 Coordenadas pré-definidas
+
+    const apiKeyOW = "74e091b4ba4211306e7fdd29fbfccd05";
     const cityCoords = {
         'Tupã': { lat: -21.9347, lon: -50.5136 },
         'Marília': { lat: -22.2171, lon: -49.9501 },
@@ -9,8 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
         'Aracruz': { lat: -17.4153, lon: -40.2735 }
     };
 
-    // 🔑 OpenWeather API Key (substitua pela sua!)
-    const apiKeyOW = "74e091b4ba4211306e7fdd29fbfccd05";
 
     // Simulação de chuva
     function simularChuva() {
@@ -31,9 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return "Baixo";
     }
 
-    // 🌧 Busca precipitação real na OpenWeather
     async function obterPrecipitacaoOpenWeather(lat, lon) {
-        const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${apiKeyOW}`;
+        const url = `https://api.openweathermap.org/data//onecall?lat=${lat}&lon=${lon}&units=metric&appid=${apiKeyOW}`;
 
         try {
             const response = await fetch(url);
@@ -54,15 +52,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!mapa) {
             mapa = L.map('forecastMap').setView([lat, lon], 10);
 
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: "© OpenStreetMap"
-            }).addTo(mapa);
+            L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_gray/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20,
+                attribution: '&copy; Stadia Maps'
+            }).addTo(map);
 
         } else {
             mapa.setView([lat, lon], 10);
         }
-
-        if (mapa.radarLayer) mapa.removeLayer(mapa.radarLayer);
 
         mapa.radarLayer = L.tileLayer(
             `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKeyOW}`,
@@ -70,7 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
         ).addTo(mapa);
     }
 
-    // 🔎 Busca clima completo
+
+
+    // Busca clima completo
     async function fetchClima(local, coords = null) {
         const locationCoords = coords || cityCoords[local] || cityCoords['Tupã'];
 
@@ -89,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (local === "Simulado") {
                 chuva = simularChuva();
             } else {
-                chuva = await obterPrecipitacaoOpenWeather(locationCoords.lat, locationCoords.lon);
+                chuva = data.hourly?.precipitation?.[nowHour] ?? null;
             }
 
             const umidade = data.hourly?.relative_humidity_2m?.[nowHour] ?? null;
@@ -129,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Carrega clima inicial
     fetchClima(select.value);
 
-    // 📍 Localização real do usuário
+    //  Localização real do usuário
     function useMyLocation() {
         if (!navigator.geolocation) {
             alert("Seu navegador não suporta geolocalização.");
