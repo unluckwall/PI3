@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Busca clima completo
     async function fetchClima(local, coords = null) {
-        const locationCoords = coords || cityCoords[local] || cityCoords['Tupã'];
+        const locationCoords = coords || cityCoords[local] || cityCoords['Regiao1'];
 
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${locationCoords.lat}&longitude=${locationCoords.lon}&current_weather=true&hourly=precipitation,relative_humidity_2m`;
 
