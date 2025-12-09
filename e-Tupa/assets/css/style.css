@@ -149,7 +149,7 @@ footer {
     }
 }
 
-/* Misc */
+
 .alert-info {
     background: linear-gradient(90deg, var(--info) 0%, var(--primary) 100%);
     color: #fff;
@@ -158,4 +158,22 @@ footer {
     font-size: 1.1rem;
     border-radius: 0.7rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+#toast {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #222;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: 0.3s ease;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+
     let mapa;
 
     function carregarMapa(lat, lon) {
@@ -62,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
             `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKeyOW}`,
             { opacity: 0.6 }
         ).addTo(mapa);
+
     }
 
 
