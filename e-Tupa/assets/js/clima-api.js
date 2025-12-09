@@ -3,11 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const apiKeyOW = "74e091b4ba4211306e7fdd29fbfccd05";
     const cityCoords = {
-        'Tupã': { lat: -21.9347, lon: -50.5136 },
-        'Marília': { lat: -22.2171, lon: -49.9501 },
-        'Bauru': { lat: -22.3146, lon: -49.0581 },
-        'Ourinhos': { lat: -22.9797, lon: -49.8696 },
-        'Aracruz': { lat: -17.4153, lon: -40.2735 }
+        'Região 1': { lat: -22.4233, lon: -46.8267 },
+        'Região 2': { lat: -22.4409, lon: -46.8185 },
+        'Região 3': { lat: -22.4294, lon: --46.8222 },
     };
 
 
@@ -50,14 +48,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function carregarMapa(lat, lon) {
         if (!mapa) {
-            mapa = L.map('forecastMap').setView([lat, lon], 10);
+            mapa = L.map('forecastMap').setView([lat, lon], 6);
 
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 attribution: "© OpenStreetMap"
             }).addTo(mapa);
 
         } else {
-            mapa.setView([lat, lon], 10);
+            mapa.setView([lat, lon], 6);
         }
 
         mapa.radarLayer = L.tileLayer(
