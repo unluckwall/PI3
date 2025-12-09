@@ -48,14 +48,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function carregarMapa(lat, lon) {
         if (!mapa) {
-            mapa = L.map('forecastMap').setView([lat, lon], 10);
+            mapa = L.map('forecastMap').setView([lat, lon], 6);
 
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 attribution: "© OpenStreetMap"
             }).addTo(mapa);
 
         } else {
-            mapa.setView([lat, lon], 10);
+            mapa.setView([lat, lon], 6);
         }
 
         mapa.radarLayer = L.tileLayer(
