@@ -3,9 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const apiKeyOW = "74e091b4ba4211306e7fdd29fbfccd05";
     const cityCoords = {
-        'Região 1': { lat: -22.4233, lon: -46.8267 },
-        'Região 2': { lat: -22.4409, lon: -46.8185 },
-        'Região 3': { lat: -22.4294, lon: --46.8222 },
+        'Regiao1': { lat: -22.4233, lon: -46.8267 },
+        'Regiao2': { lat: -22.4409, lon: -46.8185 },
+        'Regiao3': { lat: -22.4294, lon: --46.8222 },
     };
 
 
