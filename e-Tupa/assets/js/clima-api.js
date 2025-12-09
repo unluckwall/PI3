@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const cityCoords = {
         'Regiao1': { lat: -22.4233, lon: -46.8267 },
         'Regiao2': { lat: -22.4409, lon: -46.8185 },
-        'Regiao3': { lat: -22.4294, lon: --46.8222 },
+        'Regiao3': { lat: -22.4294, lon: -46.8222 },
     };
 
 
