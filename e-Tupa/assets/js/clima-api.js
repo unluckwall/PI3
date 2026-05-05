@@ -1,176 +1,346 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // =========================
+    // CONFIGURAÇÕES
+    // =========================
+    const CONFIG = {
+        cidades: {
+            Regiao1: { lat: -22.4233, lon: -46.8267 },
+            Regiao2: { lat: -22.4409, lon: -46.8185 },
+            Regiao3: { lat: -22.4294, lon: -46.8222 },
+        },
 
-    const apiKeyOW = "74e091b4ba4211306e7fdd29fbfccd05";
-    const cityCoords = {
-        'Regiao1': { lat: -22.4233, lon: -46.8267 },
-        'Regiao2': { lat: -22.4409, lon: -46.8185 },
-        'Regiao3': { lat: -22.4294, lon: -46.8222 },
+        apiBaseUrl:
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:3000/api'
+                : '/api'
     };
 
+    // =========================
+    // ELEMENTOS DOM
+    // =========================
+    const elementos = {
+        chuva: document.getElementById('nivelChuva'),
+        agua: document.getElementById('nivelAgua'),
+        umidade: document.getElementById('nivelUmidade'),
+        risco: document.getElementById('riscoEnchente'),
+        status: document.getElementById('status-clima'),
+        select: document.getElementById('localSelect'),
+        botaoLocalizacao: document.getElementById('useMyLocation')
+    };
 
-    // Simulação de chuva
+    // =========================
+    // DADOS DOS SENSORES
+    // Futuramente MQTT vai atualizar isso
+    // =========================
+    let sensorData = {
+        nivelAgua: null,
+        chuva: null
+    };
+
+    // =========================
+    // SIMULAÇÕES
+    // =========================
     function simularChuva() {
         return parseFloat((Math.random() * 30).toFixed(1));
     }
 
-    // Simulação do nível da água
     function simularNivelAgua(chuva) {
         if (chuva === null) return Math.floor(Math.random() * 40);
+
         return Math.floor((chuva * 5) + (Math.random() * 30));
     }
 
-    // Cálculo do risco
+    // =========================
+    // CÁLCULO DE RISCO
+    // =========================
     function calcularRisco(chuva, nivelAgua) {
-        if (chuva > 20 || nivelAgua > 150) return "Crítico";
-        if (chuva > 10 || nivelAgua > 100) return "Alto";
-        if (chuva > 2 || nivelAgua > 50) return "Moderado";
+
+        const riscoScore = (chuva * 0.4) + (nivelAgua * 0.6);
+
+        if (riscoScore > 100) return "Crítico";
+        if (riscoScore > 70) return "Alto";
+        if (riscoScore > 40) return "Moderado";
+
         return "Baixo";
     }
 
-    async function obterPrecipitacaoOpenWeather(lat, lon) {
-        const url = `https://api.openweathermap.org/data//onecall?lat=${lat}&lon=${lon}&units=metric&appid=${apiKeyOW}`;
+    // =========================
+    // BUSCAR PRECIPITAÇÃO NO BACKEND
+    // =========================
+    async function obterPrecipitacao(lat, lon) {
 
         try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error("Erro ao obter OpenWeather");
+
+            const response = await fetch(
+                `${CONFIG.apiBaseUrl}/precipitacao?lat=${lat}&lon=${lon}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Erro ao buscar precipitação");
+            }
 
             const data = await response.json();
-            return data.current.rain ? data.current.rain["1h"] : 0;
+
+            return data.chuva;
 
         } catch (err) {
-            console.error("Erro precipitação OpenWeather:", err);
+
+            console.error("Erro precipitação backend:", err);
+
             return null;
         }
     }
 
-
-
+    // =========================
+    // MAPA
+    // =========================
     let mapa;
 
     function carregarMapa(lat, lon) {
+
         if (!mapa) {
+
             mapa = L.map('forecastMap').setView([lat, lon], 15);
 
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: "© OpenStreetMap"
-            }).addTo(mapa);
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution: "© OpenStreetMap"
+                }
+            ).addTo(mapa);
 
         } else {
+
             mapa.setView([lat, lon], 15);
         }
 
-        mapa.radarLayer = L.tileLayer(
-            `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKeyOW}`,
-            { opacity: 0.6 }
-        ).addTo(mapa);
+        // remove camada antiga
+        if (mapa.radarLayer) {
+            mapa.removeLayer(mapa.radarLayer);
+        }
 
+        // radar de precipitação
+        mapa.radarLayer = L.tileLayer(
+            'https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png',
+            {
+                opacity: 0.6
+            }
+        ).addTo(mapa);
     }
 
+    // =========================
+    // ATUALIZAR INTERFACE
+    // =========================
+    function atualizarInterface(dados) {
 
+        elementos.chuva.textContent =
+            dados.chuva !== null
+                ? `${dados.chuva} mm`
+                : '--';
 
-    // Busca clima completo
+        elementos.agua.textContent =
+            `${dados.nivelAgua} m`;
+
+        elementos.umidade.textContent =
+            dados.umidade !== null
+                ? `${dados.umidade}%`
+                : '--';
+
+        elementos.risco.textContent =
+            dados.risco;
+
+        elementos.status.textContent =
+            `Local: ${dados.local} | Temp: ${dados.temperatura ?? '--'}°C | Vento: ${dados.vento ?? '--'} km/h`;
+    }
+
+    // =========================
+    // ERRO NA INTERFACE
+    // =========================
+    function mostrarErro() {
+
+        elementos.status.textContent =
+            'Erro ao obter dados climáticos.';
+
+        elementos.chuva.textContent = '--';
+        elementos.agua.textContent = '--';
+        elementos.umidade.textContent = '--';
+        elementos.risco.textContent = '--';
+    }
+
+    // =========================
+    // BUSCAR CLIMA
+    // =========================
     async function fetchClima(local, coords = null) {
-        const locationCoords = coords || cityCoords[local] || cityCoords['Regiao1'];
 
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${locationCoords.lat}&longitude=${locationCoords.lon}&current_weather=true&hourly=precipitation,relative_humidity_2m`;
+        const locationCoords =
+            coords ||
+            CONFIG.cidades[local] ||
+            CONFIG.cidades['Regiao1'];
+
+        const url =
+            `https://api.open-meteo.com/v1/forecast?latitude=${locationCoords.lat}&longitude=${locationCoords.lon}&current_weather=true&hourly=precipitation,relative_humidity_2m`;
 
         try {
+
             const response = await fetch(url);
-            if (!response.ok) throw new Error("Erro ao obter Open-Meteo");
+
+            if (!response.ok) {
+                throw new Error("Erro ao obter Open-Meteo");
+            }
 
             const data = await response.json();
+
             const weather = data.current_weather || {};
+
             const nowHour = new Date().getHours();
 
             let chuva;
 
             if (local === "Simulado") {
+
                 chuva = simularChuva();
+
             } else {
-                chuva = data.hourly?.precipitation?.[nowHour] ?? null;
+
+                chuva =
+                    await obterPrecipitacao(
+                        locationCoords.lat,
+                        locationCoords.lon
+                    );
+
+                if (chuva === null) {
+                    chuva =
+                        data.hourly?.precipitation?.[nowHour] ?? null;
+                }
             }
 
-            const umidade = data.hourly?.relative_humidity_2m?.[nowHour] ?? null;
-            const nivelAgua = simularNivelAgua(chuva);
-            const risco = calcularRisco(chuva ?? 0, nivelAgua);
+            const umidade =
+                data.hourly?.relative_humidity_2m?.[nowHour] ?? null;
 
-            document.getElementById('nivelChuva').textContent =
-                chuva !== null ? `${chuva} mm` : '--';
-            document.getElementById('nivelAgua').textContent = `${nivelAgua} m`;
-            document.getElementById('nivelUmidade').textContent =
-                umidade !== null ? `${umidade}%` : '--';
-            document.getElementById('riscoEnchente').textContent = risco;
+            // futuramente MQTT substitui isso
+            sensorData.chuva = chuva;
 
-            document.getElementById('status-clima').textContent =
-                `Local: ${local} | Temp: ${weather.temperature ?? '--'}°C | Vento: ${weather.windspeed ?? '--'} km/h`;
+            sensorData.nivelAgua =
+                simularNivelAgua(chuva);
+
+            const risco =
+                calcularRisco(
+                    chuva ?? 0,
+                    sensorData.nivelAgua
+                );
+
+            atualizarInterface({
+                local,
+                chuva,
+                nivelAgua: sensorData.nivelAgua,
+                umidade,
+                risco,
+                temperatura: weather.temperature,
+                vento: weather.windspeed
+            });
 
         } catch (e) {
+
             console.error(e);
 
-            document.getElementById('status-clima').textContent =
-                'Erro ao obter dados climáticos.';
-            document.getElementById('nivelChuva').textContent = '--';
-            document.getElementById('nivelAgua').textContent = '--';
-            document.getElementById('nivelUmidade').textContent = '--';
-            document.getElementById('riscoEnchente').textContent = '--';
+            mostrarErro();
         }
 
-        carregarMapa(locationCoords.lat, locationCoords.lon);
+        carregarMapa(
+            locationCoords.lat,
+            locationCoords.lon
+        );
     }
 
-    // Dropdown de seleção de localização
-    const select = document.getElementById('localSelect');
-    select.addEventListener('change', function () {
-        fetchClima(this.value);
-    });
-
-    // Carrega clima inicial
-    fetchClima(select.value);
-
-    //  Localização real do usuário
+    // =========================
+    // LOCALIZAÇÃO DO USUÁRIO
+    // =========================
     function useMyLocation() {
+
         if (!navigator.geolocation) {
+
             alert("Seu navegador não suporta geolocalização.");
+
             return;
         }
 
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const { latitude, longitude } = position.coords;
+        navigator.geolocation.getCurrentPosition(
 
-            try {
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-                );
+            async (position) => {
 
-                const data = await response.json();
-                const locationName =
-                    data.address?.city ||
-                    data.address?.town ||
-                    data.address?.village ||
-                    "Localização";
+                const {
+                    latitude,
+                    longitude
+                } = position.coords;
 
-                if (![...select.options].some(opt => opt.value === locationName)) {
-                    const newOption = document.createElement("option");
-                    newOption.value = locationName;
-                    newOption.textContent = locationName;
-                    select.appendChild(newOption);
+                try {
+
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                    );
+
+                    const data = await response.json();
+
+                    const locationName =
+                        data.address?.city ||
+                        data.address?.town ||
+                        data.address?.village ||
+                        "Localização";
+
+                    const existeOpcao =
+                        [...elementos.select.options]
+                            .some(opt => opt.value === locationName);
+
+                    if (!existeOpcao) {
+
+                        const newOption =
+                            document.createElement("option");
+
+                        newOption.value = locationName;
+                        newOption.textContent = locationName;
+
+                        elementos.select.appendChild(newOption);
+                    }
+
+                    elementos.select.value = locationName;
+
+                    fetchClima(
+                        locationName,
+                        {
+                            lat: latitude,
+                            lon: longitude
+                        }
+                    );
+
+                } catch (e) {
+
+                    console.error(e);
+
+                    alert("Erro ao obter localização!");
                 }
+            },
 
-                select.value = locationName;
-                fetchClima(locationName, { lat: latitude, lon: longitude });
-
-            } catch (e) {
-                console.error(e);
-                alert("Erro ao obter localização!");
+            () => {
+                alert("Não foi possível acessar sua localização.");
             }
-
-        }, () => {
-            alert("Não foi possível acessar sua localização.");
-        });
+        );
     }
 
-    document.getElementById("useMyLocation")
+    // =========================
+    // EVENTOS
+    // =========================
+    elementos.select.addEventListener('change', function () {
+
+        fetchClima(this.value);
+    });
+
+    elementos.botaoLocalizacao
         .addEventListener("click", useMyLocation);
+
+    // =========================
+    // INICIALIZAÇÃO
+    // =========================
+    fetchClima(elementos.select.value);
 
 });

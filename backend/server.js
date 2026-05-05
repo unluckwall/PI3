@@ -1,28 +1,43 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+process.env.API_KEY
 
 const app = express();
-
 app.use(cors());
-app.use(express.json());
 
-// rota teste
-app.get('/api', (req, res) => {
-  res.send('API rodando 🚀');
+app.get('/api/clima', async (req, res) => {
+  try {
+    const cidade = req.query.cidade;
+
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${process.env.API_KEY}&units=metric&lang=pt_br`
+    );
+
+    const data = await response.json();
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar clima' });
+  }
 });
 
-// rota para sensor
-app.post('/api/sensor', (req, res) => {
-  const dados = req.body;
+app.get('/api/precipitacao', async (req, res) => {
+  try {
+    const { lat, lon } = req.query;
 
-  console.log('Dados recebidos:', dados);
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${process.env.API_KEY}`
+    );
 
-  res.json({ status: 'ok' });
+    const data = await response.json();
+
+    const chuva = data.current?.rain?.["1h"] || 0;
+
+    res.json({ chuva });
+
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar precipitação' });
+  }
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+app.listen(3000, () => console.log('Servidor rodando'));
