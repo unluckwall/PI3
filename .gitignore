@@ -1,0 +1,23 @@
+# ==========================
+# Node.js / Backend
+# ==========================
+/backend/node_modules/       # Dependências do Node
+/backend/.env                # Variáveis de ambiente
+/backend/npm-debug.log*      # Logs do npm
+/backend/yarn-debug.log*
+/backend/yarn-error.log*
+
+# ==========================
+# Frontend / e-Tupa
+# ==========================
+# Arquivos temporários ou compilados
+/e-Tupa/assets/css/*.map
+/e-Tupa/assets/js/*.map
+
+# ==========================
+# Sistema / IDE
+# ==========================
+.DS_Store                    # MacOS
+Thumbs.db                     # Windows
+.vscode/                      # Config do VS Code
+*.swp                         # Arquivos temporários de editores
