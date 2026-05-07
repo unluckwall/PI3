@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         apiBaseUrl:
-            window.location.hostname === 'localhost'
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
                 ? 'http://localhost:3000/api'
                 : '/api'
     };
@@ -37,6 +37,45 @@ document.addEventListener('DOMContentLoaded', function () {
         nivelAgua: null,
         chuva: null
     };
+
+    let aguaChart = null;  // só um gráfico global
+    let aguaData = [];     // histórico
+
+    function atualizarGraficoAgua(nivelAgua) {
+        aguaData.push(nivelAgua);
+
+        if (aguaData.length > 10) aguaData.shift(); // mantém últimos 10
+
+        const ctx = document.getElementById('nivelAguaChart').getContext('2d');
+
+        if (!aguaChart) {
+            aguaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: aguaData.map((_, i) => `T-${aguaData.length - i}`),
+                    datasets: [{
+                        label: 'Nível da Água (m)',
+                        data: aguaData,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    animation: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 50 }
+                    }
+                }
+            });
+        } else {
+            aguaChart.data.labels = aguaData.map((_, i) => `T-${aguaData.length - i}`);
+            aguaChart.data.datasets[0].data = aguaData;
+            aguaChart.update();
+        }
+    }
 
     // =========================
     // SIMULAÇÕES
@@ -114,19 +153,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             mapa.setView([lat, lon], 15);
         }
+        adicionarMarkers(CONFIG.cidades);
 
-        // remove camada antiga
-        if (mapa.radarLayer) {
-            mapa.removeLayer(mapa.radarLayer);
-        }
 
-        // radar de precipitação
-        mapa.radarLayer = L.tileLayer(
-            'https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png',
-            {
-                opacity: 0.6
-            }
-        ).addTo(mapa);
+    }
+
+    // =========================
+    // MARKERS DO MAPA
+    // =========================
+    let markers = [];
+
+    function adicionarMarkers(regioes) {
+        // remove markers antigos
+        markers.forEach(m => mapa.removeLayer(m));
+        markers = [];
+
+        Object.keys(regioes).forEach(nome => {
+            const { lat, lon } = regioes[nome];
+
+            const marker = L.marker([lat, lon]).addTo(mapa)
+                .bindPopup(nome); // popup mostrando o nome da região
+
+            markers.push(marker);
+        });
     }
 
     // =========================
@@ -152,6 +201,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         elementos.status.textContent =
             `Local: ${dados.local} | Temp: ${dados.temperatura ?? '--'}°C | Vento: ${dados.vento ?? '--'} km/h`;
+
+        atualizarGraficoAgua(dados.nivelAgua);
     }
 
     // =========================
