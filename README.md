@@ -22,15 +22,11 @@ O **e-TUPÃ** é um sistema IoT para **monitoramento climático urbano**, integr
 
 - Sensores físicos (chuva, umidade e pressão/nível da água)  
 - Dados externos via **API de clima**  
-- Raspberry Pi Pico W  
+- Esp32
 - Dashboard em tempo real  
-- Simulação de controle de vazão   
-- Poste inteligente com LED de alerta (verde → amarelo → vermelho)
 
 Objetivo: **Prever e alertar sobre riscos de alagamento** usando tecnologia acessível e escalável.
 
-🔗 **Acesse o site online:**  
-**https://pi3-sigma.vercel.app**
 
 ---
 
@@ -42,13 +38,9 @@ Objetivo: **Prever e alertar sobre riscos de alagamento** usando tecnologia aces
 
 # 🧩 Funcionalidades
 
-- 🔵 Leitura de sensores (chuva, umidade, pressão d’água)  
+- 🔵 Leitura de sensores (chuva, umidade, pressão d’águ)  
 - ☁️ Consulta automática a API de clima  
-- 📡 Comunicação via MQTT  
-- 🚦 LED RGB de alerta em poste inteligente  
-- 💧 Simulação de válvula (controle de vazão)  
 - 📊 Dashboard em tempo real  
-- 🗄️ Armazenamento de histórico  
 - 🌐 Atualização do estado em web/app  
 
 ---
