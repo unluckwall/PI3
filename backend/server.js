@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+const iniciarMonitoramento = require('./firebase/sensor_listener');
 
 app.use(cors());
 app.use(express.json());
@@ -73,6 +74,10 @@ app.get('/api', (req, res) => {
         status: 'API funcionando 🚀'
     });
 });
+
+// Iniciar monitoramento do sensor
+iniciarMonitoramento();
+
 
 // =========================
 // SERVIDOR

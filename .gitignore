@@ -6,6 +6,8 @@
 /backend/npm-debug.log*      # Logs do npm
 /backend/yarn-debug.log*
 /backend/yarn-error.log*
+functions/node_modules/
+functions/lib/
 
 # ==========================
 # Frontend / e-Tupa

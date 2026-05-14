@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // =========================
     const CONFIG = {
         cidades: {
-            Regiao1: { lat: -22.4233, lon: -46.8267 },
-            Regiao2: { lat: -22.4409, lon: -46.8185 },
-            Regiao3: { lat: -22.4294, lon: -46.8222 },
+            Sensores1: { lat: -22.4428, lon: -46.7993 },
+            Sensores2: { lat: -22.4409, lon: -46.8185 },
+            Sensores3: { lat: -22.4294, lon: -46.8222 },
         },
 
         apiBaseUrl:
@@ -35,9 +35,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // =========================
     let sensorData = {
         nivelAgua: null,
-        chuva: null
     };
 
+
+    // =========================
+    // GRAFICO DE NÍVEL DA ÁGUA
+    // =========================
     let aguaChart = null;  // só um gráfico global
     let aguaData = [];     // histórico
 
@@ -97,11 +100,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const riscoScore = (chuva * 0.4) + (nivelAgua * 0.6);
 
-        if (riscoScore > 100) return "Crítico";
-        if (riscoScore > 70) return "Alto";
-        if (riscoScore > 40) return "Moderado";
+        if (riscoScore > 100) return "Margem Comprometida";
+        if (riscoScore > 70) return "Próximo da Margem";
+        if (riscoScore > 40) return "Nível Elevado";
 
-        return "Baixo";
+        return "Estável";
     }
 
     // =========================
