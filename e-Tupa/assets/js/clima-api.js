@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const CONFIG = {
         cidades: {
             Sensores1: { lat: -22.4428, lon: -46.7993 },
-            Sensores2: { lat: -22.4409, lon: -46.8185 },
-            Sensores3: { lat: -22.4294, lon: -46.8222 },
+            Sensores2: { lat: -22.4472, lon: -46.7945 },
+            Sensores3: { lat: -22.4512, lon: -46.7942 },
         },
 
         apiBaseUrl:
@@ -25,13 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
         umidade: document.getElementById('nivelUmidade'),
         risco: document.getElementById('riscoEnchente'),
         status: document.getElementById('status-clima'),
-        select: document.getElementById('localSelect'),
-        botaoLocalizacao: document.getElementById('useMyLocation')
+        select: document.getElementById('localSelect')
     };
 
     // =========================
     // DADOS DOS SENSORES
-    // Futuramente MQTT vai atualizar isso
     // =========================
     let sensorData = {
         nivelAgua: null,
@@ -47,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function atualizarGraficoAgua(nivelAgua) {
         aguaData.push(nivelAgua);
 
-        if (aguaData.length > 10) aguaData.shift(); // mantém últimos 10
+        if (aguaData.length > 5) aguaData.shift(); 
 
         const ctx = document.getElementById('nivelAguaChart').getContext('2d');
 
@@ -57,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data: {
                     labels: aguaData.map((_, i) => `T-${aguaData.length - i}`),
                     datasets: [{
-                        label: 'Nível da Água (m)',
+                        label: 'Nível ate a margem (m)',
                         data: aguaData,
                         borderColor: 'rgba(54, 162, 235, 1)',
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
@@ -69,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     maintainAspectRatio: true,
                     animation: false,
                     scales: {
-                        y: { beginAtZero: true, max: 50 }
+                        y: { beginAtZero: true, max: 15}
                     }
                 }
             });
@@ -88,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function simularNivelAgua(chuva) {
-        if (chuva === null) return Math.floor(Math.random() * 40);
+        if (chuva === null) return Math.floor(Math.random(10) * 0.4);
 
         return Math.floor((chuva * 5) + (Math.random() * 30));
     }
@@ -272,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const umidade =
                 data.hourly?.relative_humidity_2m?.[nowHour] ?? null;
 
-            // futuramente MQTT substitui isso
+            
             sensorData.chuva = chuva;
 
             sensorData.nivelAgua =
@@ -307,79 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
-    // =========================
-    // LOCALIZAÇÃO DO USUÁRIO
-    // =========================
-    function useMyLocation() {
-
-        if (!navigator.geolocation) {
-
-            alert("Seu navegador não suporta geolocalização.");
-
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-
-            async (position) => {
-
-                const {
-                    latitude,
-                    longitude
-                } = position.coords;
-
-                try {
-
-                    const response = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-                    );
-
-                    const data = await response.json();
-
-                    const locationName =
-                        data.address?.city ||
-                        data.address?.town ||
-                        data.address?.village ||
-                        "Localização";
-
-                    const existeOpcao =
-                        [...elementos.select.options]
-                            .some(opt => opt.value === locationName);
-
-                    if (!existeOpcao) {
-
-                        const newOption =
-                            document.createElement("option");
-
-                        newOption.value = locationName;
-                        newOption.textContent = locationName;
-
-                        elementos.select.appendChild(newOption);
-                    }
-
-                    elementos.select.value = locationName;
-
-                    fetchClima(
-                        locationName,
-                        {
-                            lat: latitude,
-                            lon: longitude
-                        }
-                    );
-
-                } catch (e) {
-
-                    console.error(e);
-
-                    alert("Erro ao obter localização!");
-                }
-            },
-
-            () => {
-                alert("Não foi possível acessar sua localização.");
-            }
-        );
-    }
+   
 
     // =========================
     // EVENTOS
@@ -389,9 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchClima(this.value);
     });
 
-    elementos.botaoLocalizacao
-        .addEventListener("click", useMyLocation);
-
+    
     // =========================
     // INICIALIZAÇÃO
     // =========================

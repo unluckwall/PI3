@@ -8,37 +8,53 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-function iniciarMonitoramento() {
-  const sensorRef = ref(db, "dispositivos/sensor1");
+const dadosSensores = {
+  sensor1: null,
+  sensor2: null,
+  sensor3: null
+};
+
+function monitorarSensor(sensorId) {
+  const sensorRef = ref(db, `dispositivos/${sensorId}`);
 
   onValue(sensorRef, (snapshot) => {
     const dados = snapshot.val();
+    dadosSensores[sensorId] = dados;
 
     if (!dados) {
-      console.log("Sensor não encontrado");
+      console.log(`[${sensorId.toUpperCase()}] Sensor não encontrado`);
       return;
     }
-
+    
     const ativo = dados.ativo;
     const nivel = dados.nivel;
     const ultimoUpdate = dados.ultimo_update;
 
-    console.log("Dados:", dados);
+    console.log(`\n--- Dados do ${sensorId.toUpperCase()} ---`);
+    console.log("Dados brutos:", dados);
 
     if (ativo) {
-      console.log(" SENSOR ATIVO");
+      console.log(" STATUS: ATIVO");
       console.log(" Nível da água:", nivel);
 
       if (nivel >= 80) {
-        console.log(" RISCO DE ENCHENTE");
+        console.log(` ⚠️ ALERTA: RISCO DE ENCHENTE NO ${sensorId.toUpperCase()}!`);
       }
     } else {
-      console.log(" Sensor inativo");
+      console.log(" STATUS: INATIVO");
     }
 
-    console.log("Última atualização:", ultimoUpdate);
-    console.log("----------------------");
+    console.log(" Última atualização:", ultimoUpdate);
+    console.log("-------------------------------------");
   });
 }
 
-module.exports = iniciarMonitoramento;
+
+function iniciarMonitoramento() {
+  const sensores = ["sensor1", "sensor2", "sensor3"];
+  
+  // O forEach vai rodar a função monitorarSensor para cada item da lista acima
+  sensores.forEach((sensor) => {monitorarSensor(sensor);});
+}
+
+module.exports = { iniciarMonitoramento, dadosSensores };

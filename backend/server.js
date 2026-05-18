@@ -3,10 +3,18 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const iniciarMonitoramento = require('./firebase/sensor_listener');
+const {iniciarMonitoramento, dadosSensores} = require('./firebase/sensor_listener');
 
 app.use(cors());
 app.use(express.json());
+
+
+// =========================
+// Retorna os dados dos sensores
+// =========================
+app.get('/api/sensores', (req, res) => {
+    res.json(dadosSensores);
+});
 
 // =========================
 // CLIMA
