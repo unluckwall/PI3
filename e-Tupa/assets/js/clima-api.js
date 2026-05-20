@@ -28,13 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
         select: document.getElementById('localSelect')
     };
 
-    // =========================
-    // DADOS DOS SENSORES
-    // =========================
-    let sensorData = {
-        nivelAgua: null,
-    };
-
 
     // =========================
     // GRAFICO DE NÍVEL DA ÁGUA
@@ -45,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function atualizarGraficoAgua(nivelAgua) {
         aguaData.push(nivelAgua);
 
-        if (aguaData.length > 5) aguaData.shift(); 
+        if (aguaData.length > 5) aguaData.shift();
 
         const ctx = document.getElementById('nivelAguaChart').getContext('2d');
 
@@ -67,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     maintainAspectRatio: true,
                     animation: false,
                     scales: {
-                        y: { beginAtZero: true, max: 15}
+                        y: { beginAtZero: true, max: 15 }
                     }
                 }
             });
@@ -78,31 +71,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // =========================
-    // SIMULAÇÕES
-    // =========================
-    function simularChuva() {
-        return parseFloat((Math.random() * 30).toFixed(1));
-    }
-
-    function simularNivelAgua(chuva) {
-        if (chuva === null) return Math.floor(Math.random(10) * 0.4);
-
-        return Math.floor((chuva * 5) + (Math.random() * 30));
-    }
 
     // =========================
     // CÁLCULO DE RISCO
     // =========================
-    function calcularRisco(chuva, nivelAgua) {
+    function calcularRisco(sensores) {
+        const ativos = sensores.filter(
+            sensor => sensor?.ativo == true
+        ).length;
 
-        const riscoScore = (chuva * 0.4) + (nivelAgua * 0.6);
+        if (ativos === 3) return 'Margem Comprometida';
+        if (ativos === 2) return 'Próximo da Margem';
+        if (ativos === 1) return 'Nível elevado';
+        return 'Estável';
 
-        if (riscoScore > 100) return "Margem Comprometida";
-        if (riscoScore > 70) return "Próximo da Margem";
-        if (riscoScore > 40) return "Nível Elevado";
-
-        return "Estável";
     }
 
     // =========================
@@ -225,10 +207,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // =========================
     async function fetchClima(local, coords = null) {
 
+        const responseSensores = await fetch(`${CONFIG.apiBaseUrl}/sensores`);
+        const sensores = await responseSensores.json();
+
+        const listaSensores = [
+            sensores.sensor1,
+            sensores.sensor2,
+            sensores.sensor3
+        ];
+
         const locationCoords =
             coords ||
             CONFIG.cidades[local] ||
-            CONFIG.cidades['Regiao1'];
+            CONFIG.cidades['Sensores1'];
 
         const url =
             `https://api.open-meteo.com/v1/forecast?latitude=${locationCoords.lat}&longitude=${locationCoords.lon}&current_weather=true&hourly=precipitation,relative_humidity_2m`;
@@ -247,45 +238,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const nowHour = new Date().getHours();
 
-            let chuva;
-
-            if (local === "Simulado") {
-
-                chuva = simularChuva();
-
-            } else {
-
-                chuva =
-                    await obterPrecipitacao(
-                        locationCoords.lat,
-                        locationCoords.lon
-                    );
-
-                if (chuva === null) {
-                    chuva =
-                        data.hourly?.precipitation?.[nowHour] ?? null;
-                }
-            }
+            const chuva =
+                await obterPrecipitacao(
+                    locationCoords.lat,
+                    locationCoords.lon
+                );
 
             const umidade =
                 data.hourly?.relative_humidity_2m?.[nowHour] ?? null;
 
-            
-            sensorData.chuva = chuva;
 
-            sensorData.nivelAgua =
-                simularNivelAgua(chuva);
 
-            const risco =
-                calcularRisco(
-                    chuva ?? 0,
-                    sensorData.nivelAgua
-                );
+            const nivelAgua = Math.min(
+                sensores.sensor1?.nivel || 0,
+                sensores.sensor2?.nivel || 0,
+                sensores.sensor3?.nivel || 0
+            );
+
+            const risco = calcularRisco(listaSensores);
 
             atualizarInterface({
                 local,
                 chuva,
-                nivelAgua: sensorData.nivelAgua,
+                nivelAgua,
                 umidade,
                 risco,
                 temperatura: weather.temperature,
@@ -305,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     }
 
-   
+
 
     // =========================
     // EVENTOS
@@ -315,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchClima(this.value);
     });
 
-    
+
     // =========================
     // INICIALIZAÇÃO
     // =========================
