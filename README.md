@@ -44,3 +44,12 @@ Objetivo: **Prever e alertar sobre riscos de alagamento** usando tecnologia aces
 - 🌐 Atualização do estado em web/app  
 
 ---
+Antes de começar, você vai precisar ter instalado em sua máquina:
+* **[Git](https://git-scm.com/)** (para clonar o repositório)
+* **[Node.js](https://nodejs.org/)** (recomenda-se a versão LTS)
+* Um gerenciador de pacotes (como **npm** ou **yarn**)
+  
+# Execução
+- Acessa a pasta do projeto via cmd ou powershell -> comando npm install pra instalar as dependencias do projeto que vai ta no packege.json
+- Depois criar o arquivo .env dentro da pasta backend, dentro dela você escreve API_KEY:74e091b4ba4211306e7fdd29fbfccd05 , pode usar porque e a chave da api real mesmo
+- Por final no terminal rode npm run dev , ai ele vai rodar o back no node(servidor), depois no index.html você roda ele com a extensão liveServer do vscode mesmo
