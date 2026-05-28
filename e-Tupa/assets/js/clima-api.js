@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         } else {
-            aguaChart.data.labels = aguaData.map((_, i) => `T-${aguaData.length - i}`);
+            aguaChart.data.labels = aguaData.map((_, i) => `T-${aguaData.length + i}`);
             aguaChart.data.datasets[0].data = aguaData;
             aguaChart.update();
         }
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-            const nivelAgua = Math.min(
+            const nivelAgua = Math.max(
                 sensores.sensor1?.nivel || 0,
                 sensores.sensor2?.nivel || 0,
                 sensores.sensor3?.nivel || 0
@@ -295,5 +295,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // INICIALIZAÇÃO
     // =========================
     fetchClima(elementos.select.value);
+    setInterval(() => {
+        fetchClima(elementos.select.value);
+    }, 5000);
 
 });
